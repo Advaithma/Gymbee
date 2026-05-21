@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gymbee 🐝</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#FFD600">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Gymbee">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0D0D0D;--surface:#1A1A1A;--accent:#FFD600;--text:#F5F5F5;--muted:#888;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+.screen{display:none;min-height:100vh;}
+.screen.active{display:flex;flex-direction:column;}
+#splash{align-items:center;justify-content:center;text-align:center;padding:40px 20px;background:radial-gradient(ellipse at 50% 30%,#1a1500 0%,#0D0D0D 70%);}
+.bee-logo{font-size:80px;animation:float 3s ease-in-out infinite;display:block;margin-bottom:16px;}
+@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+.app-name{font-family:'Bebas Neue',cursive;font-size:72px;letter-spacing:4px;color:var(--accent);line-height:1;}
+.tagline{font-size:16px;color:var(--muted);margin:12px 0 48px;letter-spacing:1px;}
+.btn-primary{background:var(--accent);color:#000;border:none;padding:18px 48px;font-family:'Bebas Neue',cursive;font-size:22px;letter-spacing:2px;border-radius:50px;cursor:pointer;transition:all 0.2s;width:100%;max-width:320px;}
+.btn-primary:hover{background:#ffe033;transform:translateY(-2px);}
+#form-screen{padding:32px 20px;max-width:480px;margin:0 auto;width:100%;}
+.form-title{font-family:'Bebas Neue',cursive;font-size:42px;line-height:1;}
+.form-sub{color:var(--muted);font-size:14px;margin-top:6px;margin-bottom:24px;}
+.bmi-live{background:var(--surface);border-radius:16px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;}
+.bmi-label{font-size:13px;color:var(--muted);}
+.bmi-value{font-family:'Bebas Neue',cursive;font-size:32px;color:var(--accent);}
+.bmi-badge{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;}
+.field-group{margin-bottom:20px;}
+.field-label{font-size:13px;color:var(--muted);margin-bottom:8px;display:block;font-weight:600;letter-spacing:0.5px;text-transform:uppercase;}
+.field-row{display:flex;gap:8px;align-items:stretch;}
+.field-input{background:var(--surface);border:2px solid #333;border-radius:12px;padding:14px 16px;color:var(--text);font-size:16px;font-family:'DM Sans',sans-serif;flex:1;transition:border-color 0.2s;-webkit-appearance:none;}
+.field-input:focus{outline:none;border-color:var(--accent);}
+.unit-toggle{display:flex;background:var(--surface);border-radius:12px;overflow:hidden;border:2px solid #333;}
+.unit-btn{padding:0 14px;background:none;border:none;color:var(--muted);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all 0.2s;font-weight:600;}
+.unit-btn.active{background:var(--accent);color:#000;}
+.gender-row{display:flex;gap:8px;}
+.gender-btn{flex:1;padding:12px;background:var(--surface);border:2px solid #333;border-radius:12px;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:14px;cursor:pointer;transition:all 0.2s;font-weight:600;}
+.gender-btn.active{border-color:var(--accent);color:var(--accent);}
+.goal-preview{background:var(--surface);border-radius:12px;padding:14px 16px;margin-bottom:24px;font-size:14px;color:var(--muted);}
+.goal-preview span{color:var(--accent);font-weight:700;}
+#dashboard{padding:0;}
+.dash-header{padding:24px 20px 0;background:linear-gradient(180deg,#1a1500 0%,var(--bg) 100%);}
+.dash-topbar{display:flex;align-items:center;justify-content:space-between;}
+.dash-logo{font-family:'Bebas Neue',cursive;font-size:28px;color:var(--accent);letter-spacing:2px;}
+.menu-btn{width:40px;height:40px;border-radius:50%;background:var(--surface);border:2px solid var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--accent);font-weight:700;transition:all 0.2s;}
+.menu-btn:hover{background:#333;}
+.menu-dropdown{display:none;position:absolute;right:20px;top:70px;background:#222;border-radius:16px;padding:8px;z-index:100;min-width:180px;border:1px solid #333;box-shadow:0 8px 30px rgba(0,0,0,0.5);}
+.menu-dropdown.open{display:block;}
+.menu-item{display:flex;align-items:center;gap:10px;padding:12px 16px;border-radius:12px;cursor:pointer;font-size:14px;color:var(--text);transition:background 0.2s;}
+.menu-item:hover{background:#333;}
+.menu-item span{font-size:18px;}
+.stats-card{background:var(--surface);border-radius:20px;padding:20px;margin:16px 0;}
+.stats-row{display:flex;gap:12px;margin-bottom:12px;}
+.stat-chip{flex:1;background:var(--bg);border-radius:12px;padding:12px;text-align:center;}
+.stat-chip-val{font-family:'Bebas Neue',cursive;font-size:26px;color:var(--accent);}
+.stat-chip-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;}
+.weekly-quote{font-size:13px;color:var(--muted);font-style:italic;line-height:1.5;border-left:3px solid var(--accent);padding-left:12px;}
+.day-tabs-wrap{padding:0 20px;overflow-x:auto;scrollbar-width:none;}
+.day-tabs-wrap::-webkit-scrollbar{display:none;}
+.day-tabs{display:flex;gap:8px;padding:16px 0;width:max-content;}
+.day-tab{padding:10px 18px;background:var(--surface);border:2px solid transparent;border-radius:50px;font-family:'Bebas Neue',cursive;font-size:16px;letter-spacing:1px;cursor:pointer;transition:all 0.2s;color:var(--muted);white-space:nowrap;}
+.day-tab.active{background:var(--accent);color:#000;border-color:var(--accent);}
+.day-tab.today{border-color:var(--accent);color:var(--accent);}
+.day-tab.day-done{border-color:#4CAF50;color:#4CAF50;}
+.day-tab.day-done.active{background:#4CAF50;color:#000;border-color:#4CAF50;}
+#victory-screen{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.95);z-index:998;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px;}
+.v-bee{font-size:80px;display:block;margin-bottom:16px;animation:float 2s ease-in-out infinite;}
+.v-title{font-family:'Bebas Neue',cursive;font-size:52px;color:var(--accent);line-height:1;}
+.v-sub{color:var(--muted);margin-top:8px;font-size:16px;line-height:1.5;}
+.v-streak{font-family:'Bebas Neue',cursive;font-size:28px;color:#FF6B00;margin:16px 0 32px;}
+.v-btns{display:flex;flex-direction:column;gap:12px;width:100%;max-width:320px;}
+.day-content{padding:0 20px 100px;}
+.day-focus{font-family:'Bebas Neue',cursive;font-size:32px;color:var(--text);margin-bottom:16px;}
+.day-focus span{color:var(--accent);}
+.progress-bar-wrap{background:var(--surface);border-radius:50px;height:8px;margin-bottom:20px;overflow:hidden;}
+.progress-bar-fill{height:100%;background:var(--accent);border-radius:50px;transition:width 0.5s ease;}
+.progress-text{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.exercise-card{background:var(--surface);border-radius:16px;padding:18px;margin-bottom:12px;border:2px solid transparent;transition:all 0.2s;}
+.exercise-card.done{border-color:var(--accent);opacity:0.7;}
+.ex-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.ex-name{font-family:'Bebas Neue',cursive;font-size:20px;color:var(--text);line-height:1.1;}
+.ex-check{width:28px;height:28px;border-radius:50%;border:2px solid #444;background:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;}
+.ex-check.checked{background:var(--accent);border-color:var(--accent);}
+.ex-check.checked::after{content:'✓';font-size:14px;color:#000;font-weight:700;}
+.ex-badges{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;}
+.badge{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+.badge-sets{background:#1e3a2f;color:#4CAF50;}
+.badge-rest{background:#1a1a2e;color:#4A9EFF;}
+.ex-tip{font-size:13px;color:var(--muted);font-style:italic;line-height:1.5;}
+.ex-tip::before{content:'🐝 ';}
+.rest-day{text-align:center;padding:60px 20px;}
+.rest-bee{width:100px;height:100px;object-fit:contain;margin-bottom:20px;}
+.rest-title{font-family:'Bebas Neue',cursive;font-size:42px;color:var(--accent);}
+.rest-msg{color:var(--muted);margin-top:12px;line-height:1.6;font-size:15px;}
+.rest-quote{color:var(--text);font-size:18px;margin-top:24px;font-style:italic;}
+
+.confetti-wrap{position:fixed;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:999;}
+.confetti-piece{position:absolute;opacity:0;animation:confettiFall 3s ease-in forwards;}
+@keyframes confettiFall{0%{opacity:1;transform:translateY(-20px) rotate(0deg);}100%{opacity:0;transform:translateY(100vh) rotate(720deg);}}
+@media(max-width:400px){.app-name{font-size:56px;}.day-focus{font-size:26px;}}
+</style>
+</head>
+<body>
+<div id="splash" class="screen active">
+  <img src="/logo.svg" class="bee-logo" style="width:220px;height:220px;object-fit:contain;" alt="">
+  <div class="tagline">YOUR FIRST STEP STARTS HERE</div>
+  <button class="btn-primary" onclick="showScreen('form-screen')">Get Started →</button>
+</div>
+
+<div id="form-screen" class="screen">
+  <div class="form-title">Tell us<br>about you</div>
+  <div class="form-sub">Gymbee uses this to build a plan made just for you 🐝</div>
+  <div class="bmi-live">
+    <div><div class="bmi-label">YOUR BMI</div><div class="bmi-value" id="bmi-display">--</div></div>
+    <div class="bmi-badge" id="bmi-badge" style="background:#333;color:#888;">Enter stats</div>
+  </div>
+  <div class="field-group">
+    <label class="field-label">Height</label>
+    <div class="field-row">
+      <input class="field-input" id="height-input" type="number" placeholder="170" oninput="updateBMI()">
+      <div class="unit-toggle">
+        <button class="unit-btn active" id="h-cm" onclick="setHeightUnit('cm')">cm</button>
+        <button class="unit-btn" id="h-ft" onclick="setHeightUnit('ft')">ft</button>
+      </div>
+    </div>
+  </div>
+  <div class="field-group">
+    <label class="field-label">Weight</label>
+    <div class="field-row">
+      <input class="field-input" id="weight-input" type="number" placeholder="70" oninput="updateBMI()">
+      <div class="unit-toggle">
+        <button class="unit-btn active" id="w-kg" onclick="setWeightUnit('kg')">kg</button>
+        <button class="unit-btn" id="w-lbs" onclick="setWeightUnit('lbs')">lbs</button>
+      </div>
+    </div>
+  </div>
+  <div class="field-group">
+    <label class="field-label">Target Weight</label>
+    <div class="field-row">
+      <input class="field-input" id="target-input" type="number" placeholder="65" oninput="updateGoal()">
+      <div style="padding:14px 16px;color:var(--muted);font-size:14px;" id="target-unit-label">kg</div>
+    </div>
+  </div>
+  <div class="field-group">
+    <label class="field-label">Age</label>
+    <input class="field-input" id="age-input" type="number" placeholder="25" style="max-width:120px;">
+  </div>
+  <div class="field-group">
+    <label class="field-label">Gender</label>
+    <div class="gender-row">
+      <button class="gender-btn active" id="g-male" onclick="setGender('male')">Male</button>
+      <button class="gender-btn" id="g-female" onclick="setGender('female')">Female</button>
+      <button class="gender-btn" id="g-other" onclick="setGender('other')">Other</button>
+    </div>
+  </div>
+  <div class="goal-preview" id="goal-preview">Your goal will appear here as you enter your stats</div>
+  <button class="btn-primary" onclick="buildPlan()" style="margin-bottom:40px;">Build My Plan 🐝</button>
+</div>
+
+<div id="dashboard" class="screen">
+  <div class="dash-header" style="position:relative;">
+    <div class="dash-topbar">
+      <div class="dash-logo"><img src="/logo.svg" style="width:48px;height:48px;object-fit:contain;" alt=""></div>
+      <button class="menu-btn" onclick="toggleMenu()">⋯</button>
+    </div>
+    <div class="menu-dropdown" id="menu-dropdown">
+      <div class="menu-item" onclick="resetApp();closeMenu()"><span>🔄</span> Reset</div>
+    </div>
+    <div class="stats-card">
+      <div class="stats-row">
+        <div class="stat-chip"><div class="stat-chip-val" id="dash-bmi">--</div><div class="stat-chip-lbl">BMI</div></div>
+        <div class="stat-chip"><div class="stat-chip-val" id="dash-category" style="font-size:18px;">--</div><div class="stat-chip-lbl">Category</div></div>
+        <div class="stat-chip"><div class="stat-chip-val" id="dash-goal" style="font-size:16px;">--</div><div class="stat-chip-lbl">Goal</div></div>
+      </div>
+      <div class="weekly-quote" id="dash-quote"></div>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <div style="background:var(--bg);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--accent);font-weight:700;" id="dash-week">Week 1</div>
+        <div style="background:var(--bg);border-radius:20px;padding:6px 14px;font-size:13px;color:#FF6B00;font-weight:700;" id="dash-streak">🔥 0 streak</div>
+      </div>
+    </div>
+  </div>
+  <div class="day-tabs-wrap"><div class="day-tabs" id="day-tabs"></div></div>
+  <div class="day-content" id="day-content"></div>
+
+</div>
+
+<div id="victory-screen">
+  <img src="/logo.svg" class="v-bee" style="width:120px;height:120px;object-fit:contain;" alt="">
+  <div class="v-title" id="v-week">Week 1 Complete!</div>
+  <div class="v-sub">You crushed every workout this week.<br>Rest up — you've earned it!</div>
+  <div class="v-streak" id="v-streak">🔥 1 Week Streak</div>
+  <div class="v-btns">
+    <button class="btn-primary" onclick="startNextWeek()">Start Next Week →</button>
+    <button onclick="showScreen('form-screen');document.getElementById('victory-screen').style.display='none';" style="background:transparent;border:2px solid #333;color:var(--muted);padding:16px;border-radius:50px;font-family:'Bebas Neue',cursive;font-size:18px;letter-spacing:1px;cursor:pointer;">Update My Stats</button>
+  </div>
+</div>
+
+<div class="confetti-wrap" id="confetti-wrap"></div>
+
+<script>
+let state={heightUnit:'cm',weightUnit:'kg',gender:'male',activeDay:0,completed:{},plan:null,planKey:null,userStats:{},streak:0,weekCount:1,completedDays:[],weekJustCompleted:false};
+const DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+const DAY_FOCUS=['Chest + Triceps','Back + Biceps','Legs + Glutes','Shoulders + Core','Full Body','Cardio + Stretching','Rest Day 🐝'];
+const DB={
+  underweight_muscle_gain:{quote:"Every rep is building the body you want. Eat big, lift big, grow big. 🐝",plans:[[{name:"Barbell Bench Press",sets:4,reps:"8–10",rest:90,tip:"Focus on lowering the bar slowly — 3 seconds down, press up strong."},{name:"Incline Dumbbell Press",sets:4,reps:"10–12",rest:75,tip:"Keep your shoulder blades squeezed together on the bench."},{name:"Cable Chest Fly",sets:3,reps:"12–15",rest:60,tip:"Think about hugging a big tree — squeeze at the centre."},{name:"Tricep Pushdown (Bar)",sets:4,reps:"10–12",rest:60,tip:"Elbows stay glued to your sides throughout."},{name:"Skull Crushers",sets:3,reps:"10–12",rest:75,tip:"Lower slowly — controlled movement protects your elbows."},{name:"Diamond Push-ups",sets:3,reps:"10–15",rest:60,tip:"Great finisher — go to failure if you can."}],[{name:"Deadlift",sets:4,reps:"6–8",rest:120,tip:"Keep your back flat and push the floor away."},{name:"Lat Pulldown",sets:4,reps:"10–12",rest:75,tip:"Pull to your upper chest, lean back slightly."},{name:"Seated Cable Row",sets:4,reps:"10–12",rest:75,tip:"Squeeze your shoulder blades together at the end."},{name:"Dumbbell Row",sets:3,reps:"10–12",rest:60,tip:"Support yourself on a bench and row to your hip."},{name:"Barbell Curl",sets:4,reps:"10–12",rest:60,tip:"Don't swing — let your biceps do the work."},{name:"Hammer Curl",sets:3,reps:"12",rest:60,tip:"Targets the outer bicep — great for arm width."}],[{name:"Barbell Squat",sets:4,reps:"8–10",rest:120,tip:"Chest up, knees track over toes — sit back like onto a chair."},{name:"Romanian Deadlift",sets:4,reps:"10–12",rest:90,tip:"Feel the stretch in your hamstrings — hinge at the hips."},{name:"Leg Press",sets:4,reps:"10–12",rest:75,tip:"Don't lock your knees at the top — keep a slight bend."},{name:"Leg Curl Machine",sets:3,reps:"12–15",rest:60,tip:"Slow and controlled — don't let the weight slam down."},{name:"Calf Raise",sets:4,reps:"15–20",rest:45,tip:"Go through the full range — all the way up and down."},{name:"Glute Kickback",sets:3,reps:"15",rest:45,tip:"Squeeze your glute hard at the top of every rep."}],[{name:"Overhead Press",sets:4,reps:"8–10",rest:90,tip:"Press straight up — don't flare your elbows too wide."},{name:"Dumbbell Lateral Raise",sets:4,reps:"12–15",rest:60,tip:"Slight bend in the elbow, raise to shoulder height only."},{name:"Front Raise",sets:3,reps:"12–15",rest:60,tip:"Control the way down — don't let gravity do the work."},{name:"Face Pull",sets:3,reps:"15",rest:45,tip:"Great for shoulder health — pull to your ears."},{name:"Plank",sets:3,reps:"45–60s",rest:60,tip:"Squeeze everything — glutes, abs, and breathe."},{name:"Cable Crunch",sets:3,reps:"15–20",rest:45,tip:"Round your spine — don't pull with your neck."}],[{name:"Romanian Deadlift",sets:3,reps:"10",rest:90,tip:"Perfect for reinforcing the hip hinge pattern."},{name:"Dumbbell Bench Press",sets:3,reps:"10–12",rest:75,tip:"Greater range of motion than barbell."},{name:"Pull-up / Assisted",sets:3,reps:"6–10",rest:90,tip:"Use assisted machine if needed — full range matters."},{name:"Goblet Squat",sets:3,reps:"12",rest:75,tip:"Hold a dumbbell at your chest — great for squat form."},{name:"Dumbbell Shoulder Press",sets:3,reps:"10–12",rest:60,tip:"Seated or standing — keep your core tight."},{name:"Farmer's Walk",sets:3,reps:"30m",rest:90,tip:"Heavy dumbbells, walk tall — great for grip and core."}],[{name:"Treadmill Incline Walk",sets:1,reps:"20 mins",rest:0,tip:"Incline 8–10, speed 5–6 km/h — burns calories without losing muscle."},{name:"Rowing Machine",sets:1,reps:"10 mins",rest:0,tip:"Great full body cardio — push with your legs first."},{name:"Hip Flexor Stretch",sets:3,reps:"45s",rest:30,tip:"Kneel on one knee, push hips forward gently."},{name:"Hamstring Stretch",sets:3,reps:"45s",rest:30,tip:"Sit and reach — hold, don't bounce."},{name:"Chest Stretch",sets:3,reps:"30s",rest:30,tip:"Arms at 90° in a doorway — open up that chest."}],[]]},
+  normal_fat_loss:{quote:"Small daily efforts lead to big changes. You've got this. 🐝",plans:[[{name:"Chest Press Machine",sets:3,reps:"12–15",rest:60,tip:"Great starting point — focus on the squeeze at the top."},{name:"Incline Dumbbell Press",sets:3,reps:"12–15",rest:60,tip:"Upper chest focus — go lighter and feel it."},{name:"Cable Crossover",sets:3,reps:"15",rest:45,tip:"Slow and controlled — feel every rep."},{name:"Push-ups",sets:3,reps:"15–20",rest:45,tip:"Great burnout finisher — go until failure."},{name:"Tricep Pushdown",sets:3,reps:"15",rest:45,tip:"Full extension at the bottom — squeeze hard."},{name:"Bench Dips",sets:3,reps:"12–15",rest:45,tip:"Body upright to target triceps, not chest."}],[{name:"Lat Pulldown",sets:3,reps:"12–15",rest:60,tip:"Wide grip, pull to upper chest."},{name:"Seated Cable Row",sets:3,reps:"12–15",rest:60,tip:"Elbows close to body, squeeze at the end."},{name:"Machine Row",sets:3,reps:"15",rest:45,tip:"Set the chest pad and pull with your elbows."},{name:"Straight Arm Pulldown",sets:3,reps:"15",rest:45,tip:"Keeps tension on the lats throughout."},{name:"Dumbbell Curl",sets:3,reps:"12–15",rest:45,tip:"Alternate arms, no swinging."},{name:"Concentration Curl",sets:3,reps:"12",rest:45,tip:"Elbow on knee — pure isolation."}],[{name:"Leg Press",sets:3,reps:"15",rest:60,tip:"Feet shoulder width, push through your heels."},{name:"Leg Extension",sets:3,reps:"15–20",rest:45,tip:"Squeeze the quad at the top."},{name:"Leg Curl Machine",sets:3,reps:"15",rest:45,tip:"Slow eccentric — feel the hamstring."},{name:"Sumo Squat",sets:3,reps:"15",rest:60,tip:"Wide stance, toes out — targets inner thigh and glutes."},{name:"Hip Abduction Machine",sets:3,reps:"20",rest:45,tip:"Outer glute burner — go lighter, feel it."},{name:"Calf Raise",sets:3,reps:"20",rest:45,tip:"Full range of motion every rep."}],[{name:"Dumbbell Shoulder Press",sets:3,reps:"12–15",rest:60,tip:"Don't lock out — keep tension on the shoulder."},{name:"Lateral Raise",sets:3,reps:"15",rest:45,tip:"Light weight, slow and controlled."},{name:"Rear Delt Fly",sets:3,reps:"15",rest:45,tip:"Often neglected — essential for posture."},{name:"Plank",sets:3,reps:"45s",rest:45,tip:"Flat back, squeeze everything."},{name:"Bicycle Crunch",sets:3,reps:"20",rest:45,tip:"Slow and deliberate — touch elbow to knee."},{name:"Leg Raise",sets:3,reps:"15",rest:45,tip:"Lower back pressed into the floor throughout."}],[{name:"Goblet Squat",sets:3,reps:"15",rest:60,tip:"Great form practice for beginners."},{name:"Dumbbell Bench Press",sets:3,reps:"12",rest:60,tip:"Control the descent."},{name:"Dumbbell Row",sets:3,reps:"12",rest:60,tip:"One arm at a time — full stretch at bottom."},{name:"Dumbbell Shoulder Press",sets:3,reps:"12",rest:60,tip:"Seated for stability."},{name:"Romanian Deadlift",sets:3,reps:"12",rest:60,tip:"Hip hinge — feel the hamstring stretch."},{name:"Mountain Climbers",sets:3,reps:"30s",rest:45,tip:"Keep hips down — core tight."}],[{name:"Treadmill Jog/Walk Intervals",sets:1,reps:"25 mins",rest:0,tip:"1 min jog, 2 min walk — repeat. Great fat burner."},{name:"Stationary Bike",sets:1,reps:"15 mins",rest:0,tip:"Moderate resistance, steady pace."},{name:"Full Body Stretch",sets:1,reps:"10 mins",rest:0,tip:"Hold each stretch 30–45 seconds — don't rush."}],[]]},
+  overweight_fat_loss:{quote:"Every workout is a step in the right direction. Keep moving. 🐝",plans:[[{name:"Chest Press Machine",sets:3,reps:"12–15",rest:75,tip:"Machine is perfect — safe and effective."},{name:"Pec Deck Machine",sets:3,reps:"15",rest:60,tip:"Slow squeeze at the centre — feel every rep."},{name:"Seated Cable Fly",sets:3,reps:"15",rest:60,tip:"Light weight, full range — quality over quantity."},{name:"Tricep Pushdown",sets:3,reps:"15",rest:60,tip:"Elbows tight to sides, full extension."},{name:"Overhead Tricep Extension",sets:3,reps:"15",rest:60,tip:"Face away from machine, both hands on rope."}],[{name:"Lat Pulldown",sets:3,reps:"12–15",rest:75,tip:"Pull to your collarbone — squeeze shoulder blades."},{name:"Seated Cable Row",sets:3,reps:"12–15",rest:75,tip:"Upright posture — don't lean back too far."},{name:"Machine Row",sets:3,reps:"15",rest:60,tip:"Chest on pad — isolates the back perfectly."},{name:"Dumbbell Curl",sets:3,reps:"12–15",rest:60,tip:"Seated on a bench for support."},{name:"Cable Curl",sets:3,reps:"15",rest:60,tip:"Constant tension — great for beginners."}],[{name:"Leg Press",sets:3,reps:"15",rest:90,tip:"Easier on the knees than squats — great starting point."},{name:"Leg Extension",sets:3,reps:"15",rest:60,tip:"Controlled movement — no jerking."},{name:"Seated Leg Curl",sets:3,reps:"15",rest:60,tip:"Seated is more comfortable — slow and steady."},{name:"Hip Abduction Machine",sets:3,reps:"20",rest:60,tip:"Outer glutes — important for knee stability."},{name:"Calf Raise",sets:3,reps:"20",rest:45,tip:"Seated calf raise is easier on the lower back."}],[{name:"Shoulder Press Machine",sets:3,reps:"12–15",rest:75,tip:"Machine keeps the movement controlled and safe."},{name:"Lateral Raise (Cable)",sets:3,reps:"15",rest:60,tip:"Cable gives constant tension."},{name:"Face Pull",sets:3,reps:"15",rest:60,tip:"Excellent for posture and rear delts."},{name:"Plank (Knee if needed)",sets:3,reps:"30–45s",rest:60,tip:"Start on knees if needed — build up gradually."},{name:"Seated Crunch Machine",sets:3,reps:"15",rest:60,tip:"Controlled crunch — exhale as you contract."}],[{name:"Leg Press",sets:3,reps:"15",rest:75,tip:"Lower body compound to start."},{name:"Chest Press Machine",sets:3,reps:"12",rest:75,tip:"Upper body push."},{name:"Lat Pulldown",sets:3,reps:"12",rest:75,tip:"Upper body pull."},{name:"Shoulder Press Machine",sets:3,reps:"12",rest:75,tip:"Overhead push."},{name:"Cable Row",sets:3,reps:"12",rest:75,tip:"Horizontal pull."},{name:"Plank",sets:3,reps:"30s",rest:60,tip:"Core finisher — squeeze everything."}],[{name:"Stationary Bike",sets:1,reps:"20 mins",rest:0,tip:"Low impact — easy on the joints."},{name:"Treadmill Walk (Incline)",sets:1,reps:"15 mins",rest:0,tip:"Incline 5–8, slow pace — great calorie burn."},{name:"Seated Hamstring Stretch",sets:3,reps:"45s",rest:30,tip:"Sit on bench, reach for toes — gentle hold."},{name:"Hip Flexor Stretch",sets:3,reps:"45s",rest:30,tip:"Lunge position — hold and breathe."}],[]]},
+  obese_fat_loss:{quote:"Every single rep matters. You showed up — that's already a win. 🐝",plans:[[{name:"Chest Press Machine",sets:3,reps:"12",rest:90,tip:"Adjust seat so handles are at chest height."},{name:"Pec Deck Machine",sets:3,reps:"12",rest:75,tip:"Light weight — focus on feeling your chest."},{name:"Tricep Pushdown",sets:3,reps:"12",rest:75,tip:"Standing, elbows in — simple and effective."},{name:"Seated Tricep Extension",sets:3,reps:"12",rest:75,tip:"Seated for safety — go light."}],[{name:"Lat Pulldown",sets:3,reps:"12",rest:90,tip:"Wide grip, pull down to upper chest."},{name:"Seated Cable Row",sets:3,reps:"12",rest:90,tip:"Sit upright, pull to your belly button."},{name:"Dumbbell Curl (Seated)",sets:3,reps:"12",rest:75,tip:"Seated on a bench for full support."},{name:"Cable Curl",sets:3,reps:"12",rest:75,tip:"Light and controlled — squeeze at the top."}],[{name:"Leg Press",sets:3,reps:"12",rest:90,tip:"Best leg exercise to start — no balance required."},{name:"Seated Leg Curl",sets:3,reps:"12",rest:75,tip:"Go light — hamstring health is important."},{name:"Hip Abduction Machine",sets:3,reps:"15",rest:75,tip:"Strengthens hips and knees — very important."},{name:"Seated Calf Raise",sets:3,reps:"15",rest:60,tip:"Full range — up slow, down slow."}],[{name:"Shoulder Press Machine",sets:3,reps:"12",rest:90,tip:"Seated machine — safe and stable."},{name:"Lateral Raise (Light)",sets:3,reps:"12",rest:75,tip:"Very light weight — learning the movement."},{name:"Seated Crunch Machine",sets:3,reps:"12",rest:75,tip:"Start light — core training is essential."},{name:"Knee Plank",sets:3,reps:"20–30s",rest:60,tip:"On your knees is perfectly fine — build up."}],[{name:"Leg Press",sets:3,reps:"12",rest:90,tip:"Legs first — biggest muscles, most calorie burn."},{name:"Chest Press Machine",sets:3,reps:"12",rest:90,tip:"Push movement."},{name:"Lat Pulldown",sets:3,reps:"12",rest:90,tip:"Pull movement."},{name:"Shoulder Press Machine",sets:2,reps:"12",rest:90,tip:"Overhead strength."},{name:"Knee Plank",sets:3,reps:"20s",rest:60,tip:"Core to finish — you're doing amazing."}],[{name:"Stationary Bike",sets:1,reps:"15–20 mins",rest:0,tip:"Best starting cardio — zero impact on joints."},{name:"Seated Marching",sets:1,reps:"5 mins",rest:0,tip:"Seated on bench — lift knees alternately."},{name:"Seated Hamstring Stretch",sets:3,reps:"30s",rest:30,tip:"Gentle hold — never force a stretch."},{name:"Shoulder Cross Stretch",sets:3,reps:"30s",rest:30,tip:"Pull arm across chest — hold gently."}],[]]},
+  normal_muscle_gain:{quote:"You've got the perfect foundation. Time to build something great. 🐝",plans:[[{name:"Barbell Bench Press",sets:4,reps:"8–10",rest:90,tip:"Lower controlled — 3 seconds down, explosive up."},{name:"Incline Dumbbell Press",sets:3,reps:"10–12",rest:75,tip:"Upper chest focus — feel the stretch at the bottom."},{name:"Cable Crossover",sets:3,reps:"12–15",rest:60,tip:"Squeeze hard at the centre every rep."},{name:"Tricep Pushdown",sets:3,reps:"12–15",rest:60,tip:"Full extension — squeeze at the bottom."},{name:"Overhead Tricep Extension",sets:3,reps:"12",rest:60,tip:"Slow on the way down for maximum stretch."},{name:"Push-ups",sets:2,reps:"To failure",rest:45,tip:"Great finisher — go until you can't anymore."}],[{name:"Lat Pulldown",sets:4,reps:"10–12",rest:75,tip:"Pull to your chest — squeeze shoulder blades."},{name:"Seated Cable Row",sets:4,reps:"10–12",rest:75,tip:"Full stretch forward, full squeeze back."},{name:"Dumbbell Row",sets:3,reps:"10–12",rest:60,tip:"Row to your hip — don't rotate your torso."},{name:"Face Pull",sets:3,reps:"15",rest:45,tip:"Great for posture and rear delt health."},{name:"Barbell Curl",sets:3,reps:"10–12",rest:60,tip:"Strict form — no body swing."},{name:"Incline Dumbbell Curl",sets:3,reps:"12",rest:60,tip:"Stretch at the bottom is key for growth."}],[{name:"Barbell Squat",sets:4,reps:"8–10",rest:120,tip:"Depth matters — hit parallel or below."},{name:"Romanian Deadlift",sets:3,reps:"10–12",rest:90,tip:"Hip hinge — feel that hamstring stretch."},{name:"Leg Press",sets:3,reps:"12–15",rest:75,tip:"Feet high for more glutes, low for more quads."},{name:"Leg Curl",sets:3,reps:"12–15",rest:60,tip:"Slow and controlled both ways."},{name:"Leg Extension",sets:3,reps:"15",rest:60,tip:"Squeeze at the top for full quad activation."},{name:"Calf Raise",sets:4,reps:"15–20",rest:45,tip:"Calves need high reps — full range always."}],[{name:"Overhead Press (Dumbbell)",sets:4,reps:"10–12",rest:90,tip:"Press up and slightly in — arc the path."},{name:"Lateral Raise",sets:4,reps:"12–15",rest:60,tip:"Slight forward lean, raise to ear level."},{name:"Rear Delt Fly",sets:3,reps:"15",rest:45,tip:"Bent over, elbows soft — squeeze rear delts."},{name:"Arnold Press",sets:3,reps:"12",rest:75,tip:"Rotate as you press — works all three heads."},{name:"Plank",sets:3,reps:"45s",rest:60,tip:"Perfect tension throughout."},{name:"Russian Twist",sets:3,reps:"20",rest:45,tip:"Control the rotation — use a light plate."}],[{name:"Deadlift",sets:3,reps:"6–8",rest:120,tip:"The king of all exercises — perfect form first."},{name:"Bench Press",sets:3,reps:"10",rest:90,tip:"Full range — touch the chest lightly."},{name:"Pull-up / Assisted",sets:3,reps:"8–10",rest:90,tip:"Dead hang at bottom, chin over bar at top."},{name:"Dumbbell Lunges",sets:3,reps:"12 each",rest:75,tip:"Keep your torso upright — long strides."},{name:"Face Pull",sets:3,reps:"15",rest:45,tip:"Shoulder health — never skip this."},{name:"Ab Wheel Rollout",sets:3,reps:"10",rest:60,tip:"Keep your core tight — don't let hips sag."}],[{name:"Treadmill Jog",sets:1,reps:"20 mins",rest:0,tip:"Moderate pace — this is active recovery."},{name:"Foam Rolling",sets:1,reps:"10 mins",rest:0,tip:"Roll each muscle group for 60 seconds."},{name:"Hip Flexor Stretch",sets:3,reps:"45s",rest:30,tip:"Tight hip flexors limit your squat."},{name:"Full Body Stretch",sets:1,reps:"10 mins",rest:0,tip:"Hold each position — breathe into the stretch."}],[]]},
+  overweight_muscle_gain:{quote:"Strength first — the rest will follow. Trust the process. 🐝",plans:[[{name:"Chest Press Machine",sets:3,reps:"10–12",rest:75,tip:"Push through your chest — controlled movement."},{name:"Incline Chest Press Machine",sets:3,reps:"12",rest:75,tip:"Upper chest — adjust seat height for best feel."},{name:"Pec Deck Machine",sets:3,reps:"12–15",rest:60,tip:"Slow squeeze — don't let weight bang."},{name:"Tricep Pushdown",sets:3,reps:"12–15",rest:60,tip:"Full extension every rep."},{name:"Tricep Dips (Assisted)",sets:3,reps:"10–12",rest:75,tip:"Use the assisted dip machine."}],[{name:"Lat Pulldown",sets:3,reps:"10–12",rest:75,tip:"Pull with your elbows — not your hands."},{name:"Seated Cable Row",sets:3,reps:"12",rest:75,tip:"Squeeze your back at the end of each rep."},{name:"Machine Row",sets:3,reps:"12",rest:60,tip:"Chest pad support — focus on back squeeze."},{name:"Dumbbell Curl (Seated)",sets:3,reps:"12",rest:60,tip:"Seated for stability — full range."},{name:"Hammer Curl",sets:3,reps:"12",rest:60,tip:"Great for forearm and outer bicep."}],[{name:"Leg Press",sets:4,reps:"12",rest:90,tip:"Great for building leg strength without balance issues."},{name:"Leg Extension",sets:3,reps:"15",rest:60,tip:"Squeeze hard at the top."},{name:"Seated Leg Curl",sets:3,reps:"12–15",rest:60,tip:"Control the movement — don't rush."},{name:"Hip Abduction Machine",sets:3,reps:"15",rest:60,tip:"Stabilises the hips for all other exercises."},{name:"Calf Raise",sets:3,reps:"20",rest:45,tip:"High reps for calves — full range."}],[{name:"Shoulder Press Machine",sets:3,reps:"12",rest:75,tip:"Controlled push — don't arch your back."},{name:"Lateral Raise",sets:3,reps:"15",rest:60,tip:"Light weight, slow — feel the shoulder work."},{name:"Face Pull",sets:3,reps:"15",rest:60,tip:"Pull to ear level — great for shoulder health."},{name:"Plank",sets:3,reps:"30–45s",rest:60,tip:"Build up the hold time each week."},{name:"Crunch Machine",sets:3,reps:"15",rest:60,tip:"Slow controlled crunch — exhale at the top."}],[{name:"Leg Press",sets:3,reps:"12",rest:90,tip:"Compound lower body."},{name:"Chest Press Machine",sets:3,reps:"12",rest:75,tip:"Upper body push."},{name:"Lat Pulldown",sets:3,reps:"12",rest:75,tip:"Upper body pull."},{name:"Shoulder Press Machine",sets:3,reps:"12",rest:75,tip:"Overhead strength."},{name:"Dumbbell Row",sets:3,reps:"12",rest:75,tip:"Great back builder."},{name:"Plank",sets:3,reps:"30s",rest:60,tip:"Core finisher."}],[{name:"Stationary Bike",sets:1,reps:"20 mins",rest:0,tip:"Moderate intensity — warm down."},{name:"Treadmill Walk (Incline)",sets:1,reps:"15 mins",rest:0,tip:"Low impact calorie burn."},{name:"Full Body Stretch",sets:1,reps:"10 mins",rest:0,tip:"Focus on quads, hamstrings, and shoulders."}],[]]},
+  underweight_fat_loss:{quote:"Lean and strong is the goal. Build muscle while staying light. 🐝",plans:[[{name:"Incline Dumbbell Press",sets:3,reps:"12",rest:75,tip:"Upper chest focus — controlled movement."},{name:"Cable Crossover",sets:3,reps:"15",rest:60,tip:"Light weight, squeeze hard at centre."},{name:"Push-ups",sets:3,reps:"15",rest:60,tip:"Bodyweight is great for lean muscle."},{name:"Tricep Pushdown",sets:3,reps:"15",rest:60,tip:"Full extension — feel the tricep work."},{name:"Bench Dips",sets:3,reps:"12",rest:60,tip:"Body upright targets triceps more."}],[{name:"Lat Pulldown",sets:3,reps:"12",rest:75,tip:"Pull to upper chest — squeeze at the bottom."},{name:"Seated Row",sets:3,reps:"12",rest:75,tip:"Elbows close, squeeze at the end."},{name:"Dumbbell Row",sets:3,reps:"12",rest:60,tip:"Row to your hip — full stretch."},{name:"Dumbbell Curl",sets:3,reps:"12",rest:60,tip:"Slow and controlled — no swinging."},{name:"Hammer Curl",sets:3,reps:"12",rest:60,tip:"Great for arm thickness."}],[{name:"Leg Press",sets:3,reps:"15",rest:75,tip:"Good foundation — push through your heels."},{name:"Romanian Deadlift",sets:3,reps:"12",rest:75,tip:"Hip hinge — feel the hamstring stretch."},{name:"Leg Curl",sets:3,reps:"15",rest:60,tip:"Control the movement both ways."},{name:"Bodyweight Squat",sets:3,reps:"20",rest:45,tip:"Perfect form practice — depth and posture."},{name:"Calf Raise",sets:3,reps:"20",rest:45,tip:"Full range every single rep."}],[{name:"Dumbbell Shoulder Press",sets:3,reps:"12",rest:75,tip:"Seated for stability."},{name:"Lateral Raise",sets:3,reps:"15",rest:60,tip:"Light weight, slow and controlled."},{name:"Face Pull",sets:3,reps:"15",rest:60,tip:"Shoulder health and posture."},{name:"Plank",sets:3,reps:"45s",rest:60,tip:"Perfect tension throughout."},{name:"Bicycle Crunch",sets:3,reps:"20",rest:45,tip:"Slow — touch elbow to knee."}],[{name:"Goblet Squat",sets:3,reps:"15",rest:75,tip:"Hold dumbbell at chest — great squat practice."},{name:"Dumbbell Bench Press",sets:3,reps:"12",rest:75,tip:"Control the descent."},{name:"Dumbbell Row",sets:3,reps:"12",rest:75,tip:"Full range — feel the back work."},{name:"Mountain Climbers",sets:3,reps:"30s",rest:45,tip:"Core and cardio — keep hips down."},{name:"Jumping Jacks",sets:3,reps:"60s",rest:45,tip:"Great calorie burner — go at your pace."}],[{name:"Treadmill Jog",sets:1,reps:"20 mins",rest:0,tip:"Moderate pace — steady state cardio."},{name:"Jump Rope",sets:1,reps:"10 mins",rest:0,tip:"Great calorie burn in short time."},{name:"Full Body Stretch",sets:1,reps:"10 mins",rest:0,tip:"Hold each stretch 30–45 seconds."}],[]]},
+  underweight_maintenance:{quote:"You're in a great place — let's keep it and build on it. 🐝",plans:[[{name:"Dumbbell Bench Press",sets:3,reps:"10–12",rest:75,tip:"Balanced chest work — control throughout."},{name:"Cable Fly",sets:3,reps:"12–15",rest:60,tip:"Squeeze at the centre — full range."},{name:"Push-ups",sets:3,reps:"15",rest:60,tip:"Great bodyweight finisher."},{name:"Tricep Pushdown",sets:3,reps:"12",rest:60,tip:"Clean movement — elbows in."},{name:"Overhead Extension",sets:3,reps:"12",rest:60,tip:"Slow on the way down."}],[{name:"Lat Pulldown",sets:3,reps:"12",rest:75,tip:"Pull to collarbone — squeeze lats."},{name:"Seated Row",sets:3,reps:"12",rest:75,tip:"Upright posture throughout."},{name:"Dumbbell Row",sets:3,reps:"12",rest:60,tip:"Row to hip — don't rush."},{name:"Barbell Curl",sets:3,reps:"12",rest:60,tip:"Strict form — biceps only."},{name:"Hammer Curl",sets:3,reps:"12",rest:60,tip:"Builds arm thickness nicely."}],[{name:"Goblet Squat",sets:3,reps:"15",rest:75,tip:"Chest up, depth to parallel."},{name:"Leg Press",sets:3,reps:"12",rest:75,tip:"Solid lower body base."},{name:"Leg Curl",sets:3,reps:"12",rest:60,tip:"Controlled both ways."},{name:"Leg Extension",sets:3,reps:"15",rest:60,tip:"Quad squeeze at the top."},{name:"Calf Raise",sets:3,reps:"20",rest:45,tip:"Full range every rep."}],[{name:"Shoulder Press (Dumbbell)",sets:3,reps:"12",rest:75,tip:"Balanced overhead strength."},{name:"Lateral Raise",sets:3,reps:"15",rest:60,tip:"Slow and controlled."},{name:"Face Pull",sets:3,reps:"15",rest:60,tip:"Shoulder health — never skip."},{name:"Plank",sets:3,reps:"45s",rest:60,tip:"Everything tight — breathe."},{name:"Ab Crunch",sets:3,reps:"20",rest:45,tip:"Controlled — no neck strain."}],[{name:"Romanian Deadlift",sets:3,reps:"12",rest:75,tip:"Hip hinge pattern."},{name:"Bench Press",sets:3,reps:"10",rest:75,tip:"Compound upper body push."},{name:"Pull-up (Assisted)",sets:3,reps:"8",rest:90,tip:"Full range matters most."},{name:"Goblet Squat",sets:3,reps:"12",rest:75,tip:"Great squat form builder."},{name:"Plank",sets:3,reps:"45s",rest:60,tip:"Core finisher."}],[{name:"Light Jog or Walk",sets:1,reps:"20 mins",rest:0,tip:"Just move — keep the body active."},{name:"Stationary Bike",sets:1,reps:"15 mins",rest:0,tip:"Easy pace — active recovery."},{name:"Full Body Stretch",sets:1,reps:"10 mins",rest:0,tip:"Hold and breathe into each stretch."}],[]]},
+  normal_maintenance:{quote:"Consistency is your superpower. Show up every day. 🐝",plans:[[{name:"Chest Press Machine",sets:3,reps:"12",rest:75,tip:"Controlled push — feel your chest."},{name:"Dumbbell Bench Press",sets:3,reps:"12",rest:75,tip:"Great range of motion."},{name:"Cable Fly",sets:3,reps:"15",rest:60,tip:"Squeeze at the centre."},{name:"Tricep Pushdown",sets:3,reps:"15",rest:60,tip:"Full extension — elbows in."},{name:"Dips (Assisted)",sets:3,reps:"12",rest:75,tip:"Lean forward slightly for chest focus."}],[{name:"Lat Pulldown",sets:3,reps:"12",rest:75,tip:"Pull to chest — squeeze lats."},{name:"Cable Row",sets:3,reps:"12",rest:75,tip:"Elbows in — squeeze the back."},{name:"Dumbbell Row",sets:3,reps:"12",rest:60,tip:"One arm at a time — full stretch."},{name:"Barbell Curl",sets:3,reps:"12",rest:60,tip:"No swinging — clean curls."},{name:"Hammer Curl",sets:3,reps:"12",rest:60,tip:"Builds forearm and outer bicep."}],[{name:"Leg Press",sets:3,reps:"12–15",rest:75,tip:"Push through heels — full range."},{name:"Squat",sets:3,reps:"12",rest:90,tip:"Chest up — reach depth."},{name:"Leg Curl",sets:3,reps:"15",rest:60,tip:"Slow eccentric — feel it."},{name:"Leg Extension",sets:3,reps:"15",rest:60,tip:"Squeeze at the top."},{name:"Calf Raise",sets:3,reps:"20",rest:45,tip:"Full range always."}],[{name:"Shoulder Press",sets:3,reps:"12",rest:75,tip:"Press up and in slightly."},{name:"Lateral Raise",sets:3,reps:"15",rest:60,tip:"Raise to shoulder height."},{name:"Face Pull",sets:3,reps:"15",rest:60,tip:"Posture and shoulder health."},{name:"Plank",sets:3,reps:"45–60s",rest:60,tip:"Core tight throughout."},{name:"Russian Twist",sets:3,reps:"20",rest:45,tip:"Controlled rotation."}],[{name:"Deadlift",sets:3,reps:"8",rest:90,tip:"Keep back flat — push the floor away."},{name:"Bench Press",sets:3,reps:"10",rest:75,tip:"Touch the chest — full range."},{name:"Lat Pulldown",sets:3,reps:"12",rest:75,tip:"Upper body pull."},{name:"Goblet Squat",sets:3,reps:"15",rest:75,tip:"Great form and depth practice."},{name:"Plank",sets:3,reps:"45s",rest:60,tip:"Core finisher."}],[{name:"Jog or Cycle",sets:1,reps:"20 mins",rest:0,tip:"Steady pace — maintain cardio base."},{name:"Jump Rope",sets:1,reps:"5 mins",rest:0,tip:"Quick and effective cardio burst."},{name:"Full Body Stretch",sets:1,reps:"10 mins",rest:0,tip:"Weekly stretch keeps injuries away."}],[]]},
+  overweight_maintenance:{quote:"Building healthy habits that last a lifetime. Let's go. 🐝",plans:[[{name:"Chest Press Machine",sets:3,reps:"12",rest:75,tip:"Safe and effective — push with your chest."},{name:"Pec Deck Machine",sets:3,reps:"15",rest:60,tip:"Squeeze at the centre every rep."},{name:"Tricep Pushdown",sets:3,reps:"15",rest:60,tip:"Full extension — elbows in."},{name:"Overhead Tricep Extension",sets:3,reps:"12",rest:60,tip:"Slow on the way down."}],[{name:"Lat Pulldown",sets:3,reps:"12",rest:75,tip:"Pull to upper chest — squeeze."},{name:"Seated Cable Row",sets:3,reps:"12",rest:75,tip:"Upright, controlled movement."},{name:"Machine Row",sets:3,reps:"12",rest:60,tip:"Chest support — isolate the back."},{name:"Dumbbell Curl (Seated)",sets:3,reps:"12",rest:60,tip:"Full range, no swinging."},{name:"Cable Curl",sets:3,reps:"15",rest:60,tip:"Constant tension throughout."}],[{name:"Leg Press",sets:3,reps:"15",rest:75,tip:"Push through your heels."},{name:"Leg Extension",sets:3,reps:"15",rest:60,tip:"Quad squeeze at the top."},{name:"Seated Leg Curl",sets:3,reps:"15",rest:60,tip:"Control the movement."},{name:"Hip Abduction Machine",sets:3,reps:"20",rest:60,tip:"Outer glute and knee stability."},{name:"Calf Raise",sets:3,reps:"20",rest:45,tip:"Full range every time."}],[{name:"Shoulder Press Machine",sets:3,reps:"12",rest:75,tip:"Controlled push — don't arch."},{name:"Lateral Raise",sets:3,reps:"15",rest:60,tip:"Light and slow."},{name:"Face Pull",sets:3,reps:"15",rest:60,tip:"Posture and rear delt health."},{name:"Plank (or Knee Plank)",sets:3,reps:"30–45s",rest:60,tip:"Build up each week."},{name:"Crunch Machine",sets:3,reps:"15",rest:60,tip:"Controlled — exhale at the top."}],[{name:"Leg Press",sets:3,reps:"12",rest:75,tip:"Lower body start."},{name:"Chest Press Machine",sets:3,reps:"12",rest:75,tip:"Upper push."},{name:"Lat Pulldown",sets:3,reps:"12",rest:75,tip:"Upper pull."},{name:"Shoulder Press Machine",sets:3,reps:"12",rest:75,tip:"Overhead strength."},{name:"Plank",sets:3,reps:"30s",rest:60,tip:"Core finisher."}],[{name:"Stationary Bike",sets:1,reps:"20 mins",rest:0,tip:"Low impact — easy on the joints."},{name:"Treadmill Walk",sets:1,reps:"15 mins",rest:0,tip:"Incline walk for calorie burn."},{name:"Full Body Stretch",sets:1,reps:"10 mins",rest:0,tip:"Focus on hips, quads, and shoulders."}],[]]},
+  obese_muscle_gain:{quote:"The hardest part is starting — and you already did. Proud of you. 🐝",plans:[[{name:"Chest Press Machine",sets:3,reps:"10–12",rest:90,tip:"Add a little more weight each week."},{name:"Pec Deck Machine",sets:3,reps:"12",rest:75,tip:"Squeeze and hold for 1 second at the centre."},{name:"Tricep Pushdown",sets:3,reps:"12",rest:75,tip:"Full extension every rep."},{name:"Seated Tricep Extension",sets:3,reps:"12",rest:75,tip:"Slow and controlled — feel the stretch."}],[{name:"Lat Pulldown",sets:3,reps:"10–12",rest:90,tip:"Add weight gradually each week."},{name:"Seated Cable Row",sets:3,reps:"12",rest:90,tip:"Focus on pulling with your elbows."},{name:"Machine Row",sets:3,reps:"12",rest:75,tip:"Great back builder with chest support."},{name:"Dumbbell Curl (Seated)",sets:3,reps:"12",rest:75,tip:"Full range — feel the bicep squeeze."},{name:"Hammer Curl",sets:3,reps:"12",rest:75,tip:"Arm thickness and forearm strength."}],[{name:"Leg Press",sets:4,reps:"12",rest:90,tip:"Add weight gradually — main leg builder."},{name:"Leg Extension",sets:3,reps:"15",rest:75,tip:"Quad focus — squeeze at the top."},{name:"Seated Leg Curl",sets:3,reps:"12",rest:75,tip:"Hamstring strength."},{name:"Hip Abduction Machine",sets:3,reps:"15",rest:75,tip:"Hip and knee stability."},{name:"Seated Calf Raise",sets:3,reps:"15",rest:60,tip:"Full range — calves need work too."}],[{name:"Shoulder Press Machine",sets:3,reps:"12",rest:90,tip:"Build overhead strength safely."},{name:"Lateral Raise",sets:3,reps:"12",rest:75,tip:"Light weight — learn the movement."},{name:"Face Pull",sets:3,reps:"15",rest:60,tip:"Shoulder joint health — never skip."},{name:"Knee Plank",sets:3,reps:"20–30s",rest:60,tip:"Core foundation — build up weekly."},{name:"Crunch Machine",sets:3,reps:"12",rest:75,tip:"Controlled crunch — exhale hard."}],[{name:"Leg Press",sets:3,reps:"12",rest:90,tip:"Compound movements build the most muscle."},{name:"Chest Press Machine",sets:3,reps:"12",rest:90,tip:"Push movement."},{name:"Lat Pulldown",sets:3,reps:"12",rest:90,tip:"Pull movement."},{name:"Shoulder Press Machine",sets:3,reps:"12",rest:90,tip:"Overhead strength."},{name:"Knee Plank",sets:3,reps:"25s",rest:60,tip:"Core to finish — you've earned it."}],[{name:"Stationary Bike",sets:1,reps:"15 mins",rest:0,tip:"Light cardio — recovery focus today."},{name:"Seated Marching",sets:1,reps:"5 mins",rest:0,tip:"Gentle active recovery."},{name:"Full Body Stretch",sets:1,reps:"10 mins",rest:0,tip:"Muscles grow better when they're flexible."}],[]]},
+  obese_maintenance:{quote:"Slow and steady wins the race. You're doing amazing. 🐝",plans:[[{name:"Chest Press Machine",sets:3,reps:"12",rest:90,tip:"Steady pace — focus on form, not weight."},{name:"Pec Deck Machine",sets:3,reps:"12",rest:75,tip:"Light, controlled squeezes."},{name:"Tricep Pushdown",sets:3,reps:"12",rest:75,tip:"Simple and effective."},{name:"Seated Tricep Extension",sets:2,reps:"12",rest:75,tip:"Go light — feel it."}],[{name:"Lat Pulldown",sets:3,reps:"12",rest:90,tip:"Pull controlled — no jerking."},{name:"Seated Cable Row",sets:3,reps:"12",rest:90,tip:"Upright posture throughout."},{name:"Dumbbell Curl (Seated)",sets:3,reps:"12",rest:75,tip:"Slow curls — full range."},{name:"Cable Curl",sets:3,reps:"12",rest:75,tip:"Constant tension — great feel."}],[{name:"Leg Press",sets:3,reps:"12",rest:90,tip:"Your anchor exercise — steady and controlled."},{name:"Seated Leg Curl",sets:3,reps:"12",rest:75,tip:"Hamstring health is key."},{name:"Hip Abduction Machine",sets:3,reps:"15",rest:75,tip:"Protects your knees and hips."},{name:"Seated Calf Raise",sets:3,reps:"15",rest:60,tip:"Full range every rep."}],[{name:"Shoulder Press Machine",sets:3,reps:"12",rest:90,tip:"Steady overhead work."},{name:"Lateral Raise (Light)",sets:3,reps:"12",rest:75,tip:"Shoulder health and stability."},{name:"Face Pull",sets:3,reps:"15",rest:60,tip:"Always include this for posture."},{name:"Knee Plank",sets:3,reps:"20s",rest:60,tip:"Core matters — build it slowly."}],[{name:"Leg Press",sets:3,reps:"12",rest:90,tip:"Lower body start."},{name:"Chest Press Machine",sets:2,reps:"12",rest:90,tip:"Upper push."},{name:"Lat Pulldown",sets:2,reps:"12",rest:90,tip:"Upper pull."},{name:"Knee Plank",sets:3,reps:"20s",rest:60,tip:"Core finisher — you did it."}],[{name:"Stationary Bike",sets:1,reps:"15 mins",rest:0,tip:"Easy pace — just keep moving."},{name:"Seated Marching",sets:1,reps:"5 mins",rest:0,tip:"Gentle warmdown."},{name:"Full Body Stretch",sets:1,reps:"10 mins",rest:0,tip:"Slow and gentle — never force it."}],[]]}
+};
+
+// ── LOCALSTORAGE ──
+function saveToStorage(){try{localStorage.setItem('gymbee',JSON.stringify({userStats:state.userStats,planKey:state.planKey,completed:state.completed,streak:state.streak,weekCount:state.weekCount,completedDays:state.completedDays}));}catch(e){}}
+function loadFromStorage(){try{const d=localStorage.getItem('gymbee');if(!d)return false;const s=JSON.parse(d);state.userStats=s.userStats||{};state.planKey=s.planKey||null;state.completed=s.completed||{};state.streak=s.streak||0;state.weekCount=s.weekCount||1;state.completedDays=s.completedDays||[];if(state.planKey&&DB[state.planKey]){state.plan=DB[state.planKey];return true;}return false;}catch(e){return false;}}
+
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0);}
+function setHeightUnit(u){state.heightUnit=u;document.getElementById('h-cm').classList.toggle('active',u==='cm');document.getElementById('h-ft').classList.toggle('active',u==='ft');document.getElementById('height-input').placeholder=u==='cm'?'170':'5.7';updateBMI();}
+function setWeightUnit(u){state.weightUnit=u;document.getElementById('w-kg').classList.toggle('active',u==='kg');document.getElementById('w-lbs').classList.toggle('active',u==='lbs');document.getElementById('weight-input').placeholder=u==='kg'?'70':'154';document.getElementById('target-input').placeholder=u==='kg'?'65':'143';document.getElementById('target-unit-label').textContent=u;updateBMI();}
+function setGender(g){state.gender=g;['male','female','other'].forEach(x=>document.getElementById('g-'+x).classList.remove('active'));document.getElementById('g-'+g).classList.add('active');}
+function getWeightKg(){const w=parseFloat(document.getElementById('weight-input').value);return state.weightUnit==='lbs'?w*0.453592:w;}
+function getHeightM(){const h=parseFloat(document.getElementById('height-input').value);if(state.heightUnit==='ft'){const f=Math.floor(h);const i=(h-f)*10;return(f*12+i)*0.0254;}return h/100;}
+function getBMICategory(b){if(b<18.5)return'underweight';if(b<25)return'normal';if(b<30)return'overweight';return'obese';}
+function getBMILabel(b){if(b<18.5)return['Underweight','#4A9EFF','#0a1a2e'];if(b<25)return['Normal','#4CAF50','#0a1e0a'];if(b<30)return['Overweight','#FFD600','#1a1500'];return['Obese','#FF4444','#1e0a0a'];}
+function updateBMI(){const w=getWeightKg();const h=getHeightM();if(!w||!h||isNaN(w)||isNaN(h))return;const b=w/(h*h);const[l,c,bg]=getBMILabel(b);document.getElementById('bmi-display').textContent=b.toFixed(1);const badge=document.getElementById('bmi-badge');badge.textContent=l;badge.style.background=bg;badge.style.color=c;updateGoal();}
+function updateGoal(){const w=getWeightKg();const t=parseFloat(document.getElementById('target-input').value);const tw=state.weightUnit==='lbs'?t*0.453592:t;if(!w||!tw||isNaN(w)||isNaN(tw))return;const d=tw-w;let g,c;if(d<-1){g='Fat Loss 🔥';c='#FF6B00';}else if(d>1){g='Muscle Gain 💪';c='#4CAF50';}else{g='Maintenance ⚖️';c='#4A9EFF';}document.getElementById('goal-preview').innerHTML=`Your goal: <span style="color:${c};font-weight:700;">${g}</span>`;}
+function getGoalKey(w,t){const d=t-w;if(d<-1)return'fat_loss';if(d>1)return'muscle_gain';return'maintenance';}
+
+function buildPlan(){
+  const w=getWeightKg();const h=getHeightM();const t=parseFloat(document.getElementById('target-input').value);const tw=state.weightUnit==='lbs'?t*0.453592:t;const age=document.getElementById('age-input').value;
+  if(!w||!h||!tw||!age){alert('Please fill in all fields 🐝');return;}
+  const b=w/(h*h);const cat=getBMICategory(b);const goal=getGoalKey(w,tw);const key=`${cat}_${goal}`;
+  state.planKey=key;state.plan=DB[key]||DB['normal_maintenance'];
+  state.userStats={bmi:b.toFixed(1),category:cat,goal:goal.replace('_',' '),bmiLabel:getBMILabel(b)[0]};
+  state.completed={};state.completedDays=[];state.weekCount=state.weekCount||1;state.streak=state.streak||0;
+  state.activeDay=(new Date().getDay()+6)%7;
+  saveToStorage();renderDashboard();showScreen('dashboard');
+}
+
+function checkWeekComplete(){
+  const workDays=[0,1,2,3,4,5];
+  const allDone=workDays.every(i=>{
+    const exs=state.plan.plans[i];
+    const done=state.completed[`day_${i}`]||[];
+    return done.length===exs.length&&exs.length>0;
+  });
+  if(allDone&&!state.weekJustCompleted){
+    state.weekJustCompleted=true;
+    state.streak=(state.streak||0)+1;
+    state.weekCount=(state.weekCount||1)+1;
+    saveToStorage();
+    setTimeout(()=>showVictoryScreen(),600);
+  }
+}
+
+function showVictoryScreen(){
+  launchConfetti();
+  const v=document.getElementById('victory-screen');
+  document.getElementById('v-week').textContent=`Week ${(state.weekCount||2)-1} Complete!`;
+  document.getElementById('v-streak').textContent=`🔥 ${state.streak} Week Streak`;
+  v.style.display='flex';
+}
+
+function startNextWeek(){
+  state.completed={};state.completedDays=[];state.weekJustCompleted=false;
+  state.activeDay=(new Date().getDay()+6)%7;
+  saveToStorage();
+  document.getElementById('victory-screen').style.display='none';
+  renderDashboard();
+}
+
+function renderDashboard(){
+  const s=state.userStats;
+  document.getElementById('dash-bmi').textContent=s.bmi;
+  document.getElementById('dash-category').textContent=s.bmiLabel;
+  document.getElementById('dash-goal').textContent=s.goal.replace('fat loss','Fat Loss').replace('muscle gain','Muscle Gain').replace('maintenance','Maintain');
+  document.getElementById('dash-quote').textContent=state.plan.quote;
+  document.getElementById('dash-week').textContent=`Week ${state.weekCount||1}`;
+  document.getElementById('dash-streak').textContent=`🔥 ${state.streak||0} streak`;
+  const today=(new Date().getDay()+6)%7;
+  const tabs=document.getElementById('day-tabs');tabs.innerHTML='';
+  DAYS.forEach((d,i)=>{
+    const b=document.createElement('button');
+    const dayDone=i<6&&state.plan.plans[i].length>0&&(state.completed[`day_${i}`]||[]).length===state.plan.plans[i].length;
+    b.className='day-tab'+(i===state.activeDay?' active':'')+(i===today?' today':'')+(dayDone?' day-done':'');
+    b.textContent=d.slice(0,3).toUpperCase()+(dayDone?' ✓':'');
+    b.onclick=()=>{state.activeDay=i;renderDay();updateTabs();};
+    tabs.appendChild(b);
+  });
+  renderDay();
+}
+
+function updateTabs(){
+  const today=(new Date().getDay()+6)%7;
+  document.querySelectorAll('.day-tab').forEach((b,i)=>{
+    const dayDone=i<6&&state.plan&&state.plan.plans[i].length>0&&(state.completed[`day_${i}`]||[]).length===state.plan.plans[i].length;
+    b.className='day-tab'+(i===state.activeDay?' active':'')+(i===today?' today':'')+(dayDone?' day-done':'');
+    b.textContent=DAYS[i].slice(0,3).toUpperCase()+(dayDone?' ✓':'');
+  });
+}
+
+function renderDay(){
+  const i=state.activeDay;const exercises=state.plan.plans[i];const content=document.getElementById('day-content');
+  if(i===6){content.innerHTML=`<div class="rest-day"><img src="/logo.svg" class="rest-bee" alt="Gymbee"><div class="rest-title">Rest Day</div><div class="rest-msg">Rest is part of the plan.<br>Your muscles grow while you recover.</div><div class="rest-quote">"Recovery is progress too."</div></div>`;return;}
+  const key=`day_${i}`;const done=state.completed[key]||[];const total=exercises.length;const doneCount=done.length;const pct=total>0?(doneCount/total*100):0;
+  let html=`<div class="day-focus">${DAYS[i]} <span>/ ${DAY_FOCUS[i]}</span></div><div class="progress-text">${doneCount} / ${total} exercises done</div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>`;
+  exercises.forEach((ex,idx)=>{const isDone=done.includes(idx);html+=`<div class="exercise-card ${isDone?'done':''}"><div class="ex-top"><div class="ex-name">${ex.name}</div><div class="ex-check ${isDone?'checked':''}" onclick="toggleExercise(${i},${idx})"></div></div><div class="ex-badges"><span class="badge badge-sets">${ex.sets} sets × ${ex.reps} reps</span>${ex.rest>0?`<span class="badge badge-rest">⏱ ${ex.rest}s rest</span>`:''}</div><div class="ex-tip">${ex.tip}</div></div>`;});
+  content.innerHTML=html;
+}
+
+function toggleExercise(d,e){
+  const key=`day_${d}`;if(!state.completed[key])state.completed[key]=[];
+  const arr=state.completed[key];const pos=arr.indexOf(e);
+  if(pos===-1)arr.push(e);else arr.splice(pos,1);
+  if(arr.length===state.plan.plans[d].length&&state.plan.plans[d].length>0)setTimeout(()=>launchConfetti(),100);
+  saveToStorage();renderDay();updateTabs();checkWeekComplete();
+}
+
+function launchConfetti(){const wrap=document.getElementById('confetti-wrap');wrap.innerHTML='';const colors=['#FFD600','#FF6B00','#4CAF50','#4A9EFF','#FF4444','#fff'];for(let i=0;i<60;i++){const p=document.createElement('div');p.className='confetti-piece';p.style.cssText=`left:${Math.random()*100}%;top:-10px;background:${colors[Math.floor(Math.random()*colors.length)]};border-radius:${Math.random()>0.5?'50%':'2px'};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;animation-delay:${Math.random()*0.5}s;animation-duration:${2+Math.random()*2}s;`;wrap.appendChild(p);}setTimeout(()=>{wrap.innerHTML='';},4000);}
+
+// ── ON LOAD — restore from localStorage ──
+window.addEventListener('load',()=>{
+  if(loadFromStorage()&&state.plan){
+    state.activeDay=(new Date().getDay()+6)%7;
+    renderDashboard();showScreen('dashboard');
+  }
+});
+
+function resetApp(){try{localStorage.removeItem('gymbee');}catch(e){}state={heightUnit:'cm',weightUnit:'kg',gender:'male',activeDay:0,completed:{},plan:null,planKey:null,userStats:{},streak:0,weekCount:1,completedDays:[],weekJustCompleted:false};document.getElementById('height-input').value='';document.getElementById('weight-input').value='';document.getElementById('target-input').value='';document.getElementById('age-input').value='';document.getElementById('bmi-display').textContent='--';document.getElementById('bmi-badge').textContent='Enter stats';document.getElementById('bmi-badge').style.background='#333';document.getElementById('bmi-badge').style.color='#888';document.getElementById('goal-preview').innerHTML='Your goal will appear here as you enter your stats';document.getElementById('victory-screen').style.display='none';showScreen('form-screen');}
+function toggleMenu(){document.getElementById('menu-dropdown').classList.toggle('open');}
+function closeMenu(){document.getElementById('menu-dropdown').classList.remove('open');}
+function clearProgress(){state.completed={};renderDay();closeMenu();}
+document.addEventListener('click',function(e){if(!e.target.closest('.menu-btn')&&!e.target.closest('.menu-dropdown'))closeMenu();});
+
+// Register Service Worker
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
