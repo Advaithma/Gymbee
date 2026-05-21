@@ -94,7 +94,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .ex-tip{font-size:13px;color:var(--muted);font-style:italic;line-height:1.5;}
 .ex-tip::before{content:'🐝 ';}
 .rest-day{text-align:center;padding:60px 20px;}
-.rest-bee{font-size:80px;display:block;margin-bottom:20px;}
+.rest-bee{width:100px;height:100px;object-fit:contain;margin-bottom:20px;}
 .rest-title{font-family:'Bebas Neue',cursive;font-size:42px;color:var(--accent);}
 .rest-msg{color:var(--muted);margin-top:12px;line-height:1.6;font-size:15px;}
 .rest-quote{color:var(--text);font-size:18px;margin-top:24px;font-style:italic;}
@@ -107,8 +107,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 </head>
 <body>
 <div id="splash" class="screen active">
-  <span class="bee-logo">🐝</span>
-  <div class="app-name">GYMBEE</div>
+  <img src="/logo.svg" class="bee-logo" style="width:220px;height:220px;object-fit:contain;" alt="">
   <div class="tagline">YOUR FIRST STEP STARTS HERE</div>
   <button class="btn-primary" onclick="showScreen('form-screen')">Get Started →</button>
 </div>
@@ -166,7 +165,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 <div id="dashboard" class="screen">
   <div class="dash-header" style="position:relative;">
     <div class="dash-topbar">
-      <div class="dash-logo">🐝 GYMBEE</div>
+      <div class="dash-logo"><img src="/logo.svg" style="width:48px;height:48px;object-fit:contain;" alt=""></div>
       <button class="menu-btn" onclick="toggleMenu()">⋯</button>
     </div>
     <div class="menu-dropdown" id="menu-dropdown">
@@ -191,7 +190,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 </div>
 
 <div id="victory-screen">
-  <span class="v-bee">🐝</span>
+  <img src="/logo.svg" class="v-bee" style="width:120px;height:120px;object-fit:contain;" alt="">
   <div class="v-title" id="v-week">Week 1 Complete!</div>
   <div class="v-sub">You crushed every workout this week.<br>Rest up — you've earned it!</div>
   <div class="v-streak" id="v-streak">🔥 1 Week Streak</div>
@@ -313,7 +312,7 @@ function updateTabs(){
 
 function renderDay(){
   const i=state.activeDay;const exercises=state.plan.plans[i];const content=document.getElementById('day-content');
-  if(i===6){content.innerHTML=`<div class="rest-day"><span class="rest-bee">🐝</span><div class="rest-title">Rest Day</div><div class="rest-msg">Rest is part of the plan.<br>Your muscles grow while you recover.</div><div class="rest-quote">"Recovery is progress too."</div></div>`;return;}
+  if(i===6){content.innerHTML=`<div class="rest-day"><img src="/logo.svg" class="rest-bee" alt="Gymbee"><div class="rest-title">Rest Day</div><div class="rest-msg">Rest is part of the plan.<br>Your muscles grow while you recover.</div><div class="rest-quote">"Recovery is progress too."</div></div>`;return;}
   const key=`day_${i}`;const done=state.completed[key]||[];const total=exercises.length;const doneCount=done.length;const pct=total>0?(doneCount/total*100):0;
   let html=`<div class="day-focus">${DAYS[i]} <span>/ ${DAY_FOCUS[i]}</span></div><div class="progress-text">${doneCount} / ${total} exercises done</div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:${pct}%"></div></div>`;
   exercises.forEach((ex,idx)=>{const isDone=done.includes(idx);html+=`<div class="exercise-card ${isDone?'done':''}"><div class="ex-top"><div class="ex-name">${ex.name}</div><div class="ex-check ${isDone?'checked':''}" onclick="toggleExercise(${i},${idx})"></div></div><div class="ex-badges"><span class="badge badge-sets">${ex.sets} sets × ${ex.reps} reps</span>${ex.rest>0?`<span class="badge badge-rest">⏱ ${ex.rest}s rest</span>`:''}</div><div class="ex-tip">${ex.tip}</div></div>`;});
