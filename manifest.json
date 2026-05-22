@@ -1,0 +1,25 @@
+{
+  "name": "Gymbee",
+  "short_name": "Gymbee",
+  "description": "Your personal gym workout companion",
+  "start_url": "/",
+  "id": "/gymbee/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='40' fill='%23050505'/%3E%3Ctext x='96' y='130' font-size='110' text-anchor='middle'%3E%F0%9F%90%9D%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='100' fill='%23050505'/%3E%3Ctext x='256' y='360' font-size='300' text-anchor='middle'%3E%F0%9F%90%9D%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
