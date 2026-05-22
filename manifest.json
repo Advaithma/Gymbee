@@ -4,7 +4,7 @@
   "description": "Your personal gym workout companion",
   "start_url": "/",
   "id": "/",
-  "display": "standalone",
+  "display": "fullscreen",
   "background_color": "#050505",
   "theme_color": "#050505",
   "orientation": "portrait",
